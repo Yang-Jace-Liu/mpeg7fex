@@ -1,130 +1,130 @@
-/***************************************************************
- * Name:      main.cpp
- * Purpose:   Illustrate the usage of the MPEG-7 Feature Extraction library
- *            uses OpenCV for image handling (as does the library)
- * Author:    Muhammet Bastan (mubastan@gmail.com)
- * Created:   2010-02-19
- * Update: 2011-02-04 (update to OpenCV 2.2, Mat)
- * Copyright: Muhammet Bastan (https://sites.google.com/site/mubastan/)
- * License:
- **************************************************************/
-
 #include <iostream>
+#include <vector>
+#include <fstream>
 #include "FexWrite.h"
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-int main( int argc, char* argv[] )
-{
-    Mat image;
+std::vector<char *> load_images(char *text_path) {
+    std::ifstream fin(text_path);
+    std::vector<char *> results;
+    while (!fin.eof()) {
+        char line[200];
+        fin.getline(line, 200);
+        if (fin.fail()) {
+            std::cout << "Each path should be less than 200 characters." << std::endl;
+            exit(0);
+        }
+        results.push_back(line);
+    }
+    return results;
+}
 
-    // load an image
-    if( argc < 2 )
-        image = imread("motor.jpg");
-    else
-        image = imread( argv[1] );
+Frame *load_frame(char *image_path) {
+    Mat img = imread(image_path);
+    Frame *frame = new Frame(img.cols, img.rows, true, true, true);
+    frame->setImage(img);
+    return frame;
+}
 
-    // display the image
-    //namedWindow("image");
-    //imshow("image", image);
-    //waitKey();
+int main(int argc, char **argv) {
+    char CLD_help[100];
+    char CSD_help[100];
+    char DCD_help[100];
+    char EHD_help[100];
+    char HTD_help[100];
+    char SCD_help[100];
 
-    ///-- extract global image descriptors --
+    sprintf(CLD_help, "Usage: %s CLD <numYCoef> <numCCoef> <input list> <output text file>", argv[0]);
+    sprintf(CSD_help, "Usage: %s CSD <deckSize> <input list> <output text file>", argv[0]);
+    sprintf(DCD_help, "Usage: %s DCD <input list> <output text file>", argv[0]);
+    sprintf(EHD_help, "Usage: %s EHD <input list> <output text file>", argv[0]);
+    sprintf(HTD_help, "Usage: %s HTD <input list> <output text file>", argv[0]);
+    sprintf(SCD_help, "Usage: %s SCD <deckSize> <input list> <output text file>", argv[0]);
 
-    // create a Frame object (see include/Frame.h)
-    // allocate memory for 3-channel color and 1-channel gray image and mask
-    Frame* frame = new Frame( image.cols, image.rows, true, true, true);
+    if (argc < 4) {
+        std::cout << CLD_help << std::endl;
+        std::cout << CSD_help << std::endl;
+        std::cout << DCD_help << std::endl;
+        std::cout << EHD_help << std::endl;
+        std::cout << HTD_help << std::endl;
+        std::cout << SCD_help << std::endl;
+        return 0;
+    }
 
-    // set the image of the frame
-    frame->setImage(image);
+    char *metric = argv[1];
 
-    // compute and display the descriptors for the 'image'
-    // CSD of size 32
-    FexWrite::computeWriteCSD(frame, 32);
+    if (strcmp(metric, "CLD") == 0) {
+        if (argc < 6) {
+            std::cout << CLD_help << std::endl;
+            return 0;
+        }
+        int numYCoef = std::stoi(argv[2]);
+        int numCCoef = std::stoi(argv[3]);
+        char *input_list = argv[4];
+        std::vector<char *> images = load_images(input_list);
 
-    // SCD of size 128
-    FexWrite::computeWriteSCD( frame, true, 128 );
-
-    // CLD with numberOfYCoeff (28), numberOfCCoeff (15)
-    FexWrite::computeWriteCLD( frame, 28, 15 );
-
-    // DCD with normalization (to MPEG-7 ranges), without variance, without spatial coherency
-    FexWrite::computeWriteDCD( frame, true, false, false );
-
-    // EHD
-    FexWrite::computeWriteEHD( frame );
-
-    // HTD: we need to compute and set the grayscale image of the frame
-    // create the grayscale image
-    Mat gray;
-    cvtColor( image, gray, CV_BGR2GRAY );
-    frame->setGray( gray );
-
-    // full layer (both energy and deviation)
-    FexWrite::computeWriteHTD( frame, 1 );
-
-
-    // load another image
-    image = imread("timsah.jpg");
-    //imshow("image", image);
-    //waitKey();
-
-    // set the image of 'frame'
-    // we should resize the 'frame' first, the dimensions may be different
-    // therefore, reallocation may be required
-    frame->resize( image.cols, image.rows);
-
-    // set the image
-    frame->setImage(image);
-
-    // here, we can compute the descriptors as above..
-    // ..
-
-    ///--- extract region-based descriptos ---
-
-    // we need a foreground mask for the region
-    // lets first create a dummy foreground mask to use as the region mask
-
-    Mat mask = Mat( image.rows, image.cols, CV_8UC1, Scalar(0) );
-
-    // draw a filled rectangle/circle, with foreground value 200
-    int regVal = 200;   // (1...255)
-    circle(mask, Point(120,100), 50, Scalar(regVal), -1);
-    circle(mask, Point(120,200), 60, Scalar(regVal), -1);
-
-    // display the mask
-    //namedWindow("mask");
-    //imshow("mask", mask);
-    //waitKey();
-    imwrite("mask.png", mask);
-
-    // set the mask of 'frame', pixels having regVal are set to 255, background pixels to 0
-    frame->setMaskAll( mask, regVal, 255, 0 );
-
-    // SCD of the region
-    FexWrite::computeWriteSCD( frame, false, 128 );
-
-    // RSD (region shape)
-    FexWrite::computeWriteRSD( frame );
-
-    FexWrite::computeWriteCSD(frame, 64);
-
-    // at this point, if you want to extract descriptors
-    // from the whole image, reset the mask
-    frame->resetMaskAll();
-    FexWrite::computeWriteCSD(frame, 64);
-    FexWrite::computeWriteEHD( frame );
-
-    // ...
-    // ...
-
-    // release frame
-    delete frame;
-
-    // destroy the windows
-    //destroyWindow("image");
-    //destroyWindow("mask");
-
-    return 0;
+        for (char *image_path: images) {
+            Frame *frame = load_frame(image_path);
+            FexWrite::computeWriteCLD(frame, numYCoef, numCCoef);
+        }
+    } else if (strcmp(metric, "CSD") == 0) {
+        if (argc < 5) {
+            std::cout << CSD_help << std::endl;
+            return 0;
+        }
+        int deckSize = std::stoi(argv[2]);
+        char *input_list = argv[3];
+        std::vector<char *> images = load_images(input_list);
+        for (char *image_path: images) {
+            Frame *frame = load_frame(image_path);
+            FexWrite::computeWriteCSD(frame, deckSize);
+        }
+    } else if (strcmp(metric, "DCD") == 0) {
+        if (argc < 4) {
+            std::cout << DCD_help << std::endl;
+            return 0;
+        }
+        char *input_list = argv[2];
+        std::vector<char *> images = load_images(input_list);
+        for (char *image_path: images) {
+            Frame *frame = load_frame(image_path);
+            FexWrite::computeWriteDCD(frame);
+        }
+    } else if (strcmp(metric, "EHD") == 0) {
+        if (argc < 4) {
+            std::cout << EHD_help << std::endl;
+            return 0;
+        }
+        char *input_list = argv[2];
+        std::vector<char *> images = load_images(input_list);
+        for (char *image_path: images) {
+            Frame *frame = load_frame(image_path);
+            FexWrite::computeWriteEHD(frame);
+        }
+    } else if (strcmp(metric, "HTD") == 0) {
+        if (argc < 4) {
+            std::cout << HTD_help << std::endl;
+            return 0;
+        }
+        char *input_list = argv[2];
+        std::vector<char *> images = load_images(input_list);
+        for (char *image_path: images) {
+            Frame *frame = load_frame(image_path);
+            FexWrite::computeWriteHTD(frame);
+        }
+    } else if (strcmp(metric, "SCD") == 0) {
+        if (argc < 5) {
+            std::cout << SCD_help << std::endl;
+            return 0;
+        }
+        int deckSize = std::stoi(argv[2]);
+        char *input_list = argv[3];
+        std::vector<char *> images = load_images(input_list);
+        for (char *image_path: images) {
+            Frame *frame = load_frame(image_path);
+            FexWrite::computeWriteSCD(frame, deckSize);
+        }
+    }
 }
