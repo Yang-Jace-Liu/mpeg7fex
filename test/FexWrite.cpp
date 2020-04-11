@@ -8,6 +8,7 @@
  **************************************************************/
 
 #include <iostream>
+#include <fstream>
 
 //#include "cxcore.h"
 //#include "cv.h"
@@ -16,7 +17,7 @@
 #include "FexWrite.h"
 
 // Color Structure
-void FexWrite::computeWriteCSD( Frame* frame, int descSize )
+void FexWrite::computeWriteCSD(Frame *frame, std::ofstream & fout, int descSize)
 {
 	if(!frame)
 		return;
@@ -26,8 +27,8 @@ void FexWrite::computeWriteCSD( Frame* frame, int descSize )
 
 	// write to screen
 	for(unsigned int i = 0; i < csd->GetSize(); i++)
-		std::cout << (int)csd->GetElement(i) << " " ;
-	std::cout << std::endl;
+		fout << (int)csd->GetElement(i) << " " ;
+	fout << std::endl;
 
     // release descriptor
 	delete csd;
@@ -35,7 +36,7 @@ void FexWrite::computeWriteCSD( Frame* frame, int descSize )
 
 
 // Scalable Color
-void FexWrite::computeWriteSCD( Frame* frame, bool maskFlag, int descSize )
+void FexWrite::computeWriteSCD( Frame* frame, std::ofstream & fout, bool maskFlag, int descSize )
 {
 	if(!frame)
 		return;
@@ -45,8 +46,8 @@ void FexWrite::computeWriteSCD( Frame* frame, bool maskFlag, int descSize )
 
 	// write to screen
 	for(unsigned int i = 0; i < scd->GetNumberOfCoefficients(); i++)
-		std::cout << (int)  scd->GetCoefficient(i) << " ";
-	std::cout << std::endl;
+		fout << (int)  scd->GetCoefficient(i) << " ";
+	fout << std::endl;
 
     // release descriptor
 	delete scd;
@@ -54,7 +55,7 @@ void FexWrite::computeWriteSCD( Frame* frame, bool maskFlag, int descSize )
 
 
 // Color Layout
-void FexWrite::computeWriteCLD( Frame* frame, int numYCoef, int numCCoef )
+void FexWrite::computeWriteCLD( Frame* frame, std::ofstream & fout, int numYCoef, int numCCoef )
 {
 	if(!frame)
 		return;
@@ -79,17 +80,17 @@ void FexWrite::computeWriteCLD( Frame* frame, int numYCoef, int numCCoef )
 	int i = 0;
 	// Y coeff (DC and AC)
 	for ( i = 0; i < numberOfYCoeff; i++ )
-		std::cout << y_coeff[i] << " " ;
+		fout << y_coeff[i] << " " ;
 
 	//Cb coeff  (DC and AC)
 	for ( i = 0; i < numberOfCCoeff; i++ )
-		std::cout << cb_coeff[i] << " ";
+		fout << cb_coeff[i] << " ";
 
 	//Cr coeff  (DC and AC)
 	for ( i = 0; i < numberOfCCoeff; i++ )
-		std::cout << cr_coeff[i] << " ";
+		fout << cr_coeff[i] << " ";
 
-	std::cout << std::endl;
+	fout << std::endl;
 
     // release the descriptor
 	delete cld;
@@ -97,7 +98,7 @@ void FexWrite::computeWriteCLD( Frame* frame, int numYCoef, int numCCoef )
 
 
 // Dominant Color
-void FexWrite::computeWriteDCD( Frame* frame,
+void FexWrite::computeWriteDCD( Frame* frame, std::ofstream & fout,
                                 bool normalize, bool variance, bool spatial,
                                 int bin1, int bin2, int bin3 )
 {
@@ -116,30 +117,30 @@ void FexWrite::computeWriteDCD( Frame* frame,
 
 	// spatial coherency
 	if(spatial)
-        std::cout << dcd->GetSpatialCoherency();
+        fout << dcd->GetSpatialCoherency();
 
 	// dominant colors: percentage(1) centroid value (3) color variance (3)
 	XM::DOMCOL* domcol = dcd->GetDominantColors();
 	for( int i = 0; i < ndc; i++ )
 	{
-		std::cout << " " << domcol[i].m_Percentage
+		fout << " " << domcol[i].m_Percentage
                   << " " << domcol[i].m_ColorValue[0]
                   << " " << domcol[i].m_ColorValue[1]
                   << " " << domcol[i].m_ColorValue[2];
         if(variance)
-        std::cout << " " << domcol[i].m_ColorVariance[0]
+        fout << " " << domcol[i].m_ColorVariance[0]
                   << " " << domcol[i].m_ColorVariance[1]
                   << " " << domcol[i].m_ColorVariance[2];
 	}
 
-	std::cout << std::endl;
+	fout << std::endl;
 
     // release the descriptor
 	delete dcd;
 }
 
 // Homogeneous Texture
-void FexWrite::computeWriteHTD( Frame* frame, int layerFlag )
+void FexWrite::computeWriteHTD( Frame* frame, std::ofstream & fout, int layerFlag )
 {
 	if(!frame)
 		return;
@@ -154,14 +155,14 @@ void FexWrite::computeWriteHTD( Frame* frame, int layerFlag )
 	// values[0]: mean, values[1]: std, values[2-31] base layer (energy)
 	int i;
 	for(i = 0; i < 32; i++)
-		std::cout << values[i] << " " ;
+		fout << values[i] << " " ;
 
     // if full layer, print values[32-61] (energy deviation)
     if(layerFlag)
         for(i = 32; i < 62; i++)
-            std::cout << values[i] << " " ;
+            fout << values[i] << " " ;
 
-	std::cout << std::endl;
+	fout << std::endl;
 
     // release the descriptor
 	delete htd;
@@ -169,7 +170,7 @@ void FexWrite::computeWriteHTD( Frame* frame, int layerFlag )
 
 
 // Edge Histogram
-void FexWrite::computeWriteEHD( Frame* frame )
+void FexWrite::computeWriteEHD( Frame* frame, std::ofstream & fout)
 {
 	if(!frame)
 		return;
@@ -182,8 +183,8 @@ void FexWrite::computeWriteEHD( Frame* frame )
 
 	// write to screen
 	for( unsigned int i = 0; i < ehd->GetSize(); i++)
-		std::cout << (int)de[i] << " ";
-	std::cout  << std::endl;
+		fout << (int)de[i] << " ";
+	fout  << std::endl;
 
     // release the descriptor
 	delete ehd;

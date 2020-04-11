@@ -16,15 +16,15 @@ class FexWrite
     public:
 
         /// Color
-        static void computeWriteCSD( Frame* frame, int descSize = 64 );
-        static void computeWriteSCD( Frame* frame, bool maskFlag = true, int descSize = 128 );
-        static void computeWriteCLD( Frame* frame, int numYCoef = 64, int numCCoef = 28 );
-        static void computeWriteDCD( Frame* frame,
+        static void computeWriteCSD(Frame *frame, std::ofstream & fout, int descSize = 64);
+        static void computeWriteSCD( Frame* frame, std::ofstream & fout, bool maskFlag = true, int descSize = 128 );
+        static void computeWriteCLD( Frame* frame, std::ofstream & fout, int numYCoef = 64, int numCCoef = 28 );
+        static void computeWriteDCD( Frame* frame, std::ofstream & fout,
                                 bool normalize = true, bool variance = true, bool spatial = true,
                                 int bin1 = 32, int bin2 = 32, int bin3 = 32 );
         /// Texture
-        static void computeWriteHTD( Frame* frame, int layerFlag = 1 );
-        static void computeWriteEHD( Frame* frame );
+        static void computeWriteHTD( Frame* frame, std::ofstream & fout, int layerFlag = 1 );
+        static void computeWriteEHD( Frame* frame, std::ofstream & fout);
 
         /// shape
         static void computeWriteRSD( Frame* frame );

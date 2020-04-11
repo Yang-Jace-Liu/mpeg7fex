@@ -65,10 +65,14 @@ int main(int argc, char **argv) {
         char *input_list = argv[4];
         std::vector<char *> images = load_images(input_list);
 
+        // Clear the content if the output file exists
+        std::ofstream fout(argv[5], std::ofstream::out);
+
         for (char *image_path: images) {
             Frame *frame = load_frame(image_path);
-            FexWrite::computeWriteCLD(frame, numYCoef, numCCoef);
+            FexWrite::computeWriteCLD(frame, fout, numYCoef, numCCoef);
         }
+        fout.close();
     } else if (strcmp(metric, "CSD") == 0) {
         if (argc < 5) {
             std::cout << CSD_help << std::endl;
@@ -76,44 +80,64 @@ int main(int argc, char **argv) {
         }
         int deckSize = std::stoi(argv[2]);
         char *input_list = argv[3];
+
+        // Clear the content if the output file exists
+        std::ofstream fout(argv[4], std::ofstream::out);
+
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
             Frame *frame = load_frame(image_path);
-            FexWrite::computeWriteCSD(frame, deckSize);
+            FexWrite::computeWriteCSD(frame, fout, deckSize);
         }
+        fout.close();
     } else if (strcmp(metric, "DCD") == 0) {
         if (argc < 4) {
             std::cout << DCD_help << std::endl;
             return 0;
         }
         char *input_list = argv[2];
+
+        // Clear the content if the output file exists
+        std::ofstream fout(argv[3], std::ofstream::out);
+
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
             Frame *frame = load_frame(image_path);
-            FexWrite::computeWriteDCD(frame);
+            FexWrite::computeWriteDCD(frame, fout);
         }
+        fout.close();
     } else if (strcmp(metric, "EHD") == 0) {
         if (argc < 4) {
             std::cout << EHD_help << std::endl;
             return 0;
         }
         char *input_list = argv[2];
+
+        // Clear the content if the output file exists
+        std::ofstream fout(argv[3], std::ofstream::out);
+
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
             Frame *frame = load_frame(image_path);
-            FexWrite::computeWriteEHD(frame);
+            FexWrite::computeWriteEHD(frame, fout);
         }
+        fout.close();
     } else if (strcmp(metric, "HTD") == 0) {
         if (argc < 4) {
             std::cout << HTD_help << std::endl;
             return 0;
         }
         char *input_list = argv[2];
+
+        // Clear the content if the output file exists
+        std::ofstream fout(argv[3], std::ofstream::out);
+
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
             Frame *frame = load_frame(image_path);
-            FexWrite::computeWriteHTD(frame);
+            FexWrite::computeWriteHTD(frame, fout);
         }
+        fout.close();
     } else if (strcmp(metric, "SCD") == 0) {
         if (argc < 5) {
             std::cout << SCD_help << std::endl;
@@ -121,10 +145,15 @@ int main(int argc, char **argv) {
         }
         int deckSize = std::stoi(argv[2]);
         char *input_list = argv[3];
+
+        // Clear the content if the output file exists
+        std::ofstream fout(argv[4], std::ofstream::out);
+
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
             Frame *frame = load_frame(image_path);
-            FexWrite::computeWriteSCD(frame, deckSize);
+            FexWrite::computeWriteSCD(frame, fout, deckSize);
         }
+        fout.close();
     }
 }
