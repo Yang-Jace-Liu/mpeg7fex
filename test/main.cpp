@@ -10,13 +10,15 @@ std::vector<char *> load_images(char *text_path) {
     std::ifstream fin(text_path);
     std::vector<char *> results;
     while (!fin.eof()) {
-        char line[200];
+        char * line = new char[200];
         fin.getline(line, 200);
-        if (fin.fail()) {
-            std::cout << "Each path should be less than 200 characters." << std::endl;
-            exit(0);
+        if (!fin.eof()) {
+            if (fin.fail()) {
+                std::cout << "Each path should be less than 200 characters." << std::endl;
+                exit(0);
+            }
+            results.push_back(line);
         }
-        results.push_back(line);
     }
     return results;
 }
@@ -69,6 +71,7 @@ int main(int argc, char **argv) {
         std::ofstream fout(argv[5], std::ofstream::out);
 
         for (char *image_path: images) {
+            std::cout << image_path << std::endl;
             Frame *frame = load_frame(image_path);
             FexWrite::computeWriteCLD(frame, fout, numYCoef, numCCoef);
         }
@@ -86,6 +89,7 @@ int main(int argc, char **argv) {
 
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
+            std::cout << image_path << std::endl;
             Frame *frame = load_frame(image_path);
             FexWrite::computeWriteCSD(frame, fout, deckSize);
         }
@@ -102,6 +106,7 @@ int main(int argc, char **argv) {
 
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
+            std::cout << image_path << std::endl;
             Frame *frame = load_frame(image_path);
             FexWrite::computeWriteDCD(frame, fout);
         }
@@ -118,6 +123,7 @@ int main(int argc, char **argv) {
 
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
+            std::cout << image_path << std::endl;
             Frame *frame = load_frame(image_path);
             FexWrite::computeWriteEHD(frame, fout);
         }
@@ -134,6 +140,7 @@ int main(int argc, char **argv) {
 
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
+            std::cout << image_path << std::endl;
             Frame *frame = load_frame(image_path);
             FexWrite::computeWriteHTD(frame, fout);
         }
@@ -151,6 +158,7 @@ int main(int argc, char **argv) {
 
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
+            std::cout << image_path << std::endl;
             Frame *frame = load_frame(image_path);
             FexWrite::computeWriteSCD(frame, fout, deckSize);
         }
