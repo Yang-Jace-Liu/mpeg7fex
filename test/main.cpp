@@ -10,11 +10,11 @@ std::vector<char *> load_images(char *text_path) {
     std::ifstream fin(text_path);
     std::vector<char *> results;
     while (!fin.eof()) {
-        char * line = new char[200];
-        fin.getline(line, 200);
+        char * line = new char[400];
+        fin.getline(line, 400);
         if (!fin.eof()) {
             if (fin.fail()) {
-                std::cout << "Each path should be less than 200 characters." << std::endl;
+                std::cout << "Each path should be less than 400 characters." << std::endl;
                 exit(0);
             }
             results.push_back(line);
@@ -31,12 +31,12 @@ Frame *load_frame(char *image_path) {
 }
 
 int main(int argc, char **argv) {
-    char CLD_help[100];
-    char CSD_help[100];
-    char DCD_help[100];
-    char EHD_help[100];
-    char HTD_help[100];
-    char SCD_help[100];
+    char CLD_help[400];
+    char CSD_help[400];
+    char DCD_help[400];
+    char EHD_help[400];
+    char HTD_help[400];
+    char SCD_help[400];
 
     sprintf(CLD_help, "Usage: %s CLD <numYCoef> <numCCoef> <input list> <output text file>", argv[0]);
     sprintf(CSD_help, "Usage: %s CSD <deckSize> <input list> <output text file>", argv[0]);
