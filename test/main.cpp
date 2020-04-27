@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
         std::ofstream fout(argv[5], std::ofstream::out);
 
         for (char *image_path: images) {
-            std::cout << image_path << std::endl;
+            std::cout << "Processing: " << image_path << std::endl;
             Frame *frame = load_frame(image_path);
             FexWrite::computeWriteCLD(frame, fout, numYCoef, numCCoef);
         }
@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
 
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
-            std::cout << image_path << std::endl;
+            std::cout << "Processing: " << image_path << std::endl;
             Frame *frame = load_frame(image_path);
             FexWrite::computeWriteCSD(frame, fout, deckSize);
         }
@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
 
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
-            std::cout << image_path << std::endl;
+            std::cout << "Processing: " << image_path << std::endl;
             Frame *frame = load_frame(image_path);
             FexWrite::computeWriteDCD(frame, fout);
         }
@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
 
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
-            std::cout << image_path << std::endl;
+            std::cout << "Processing: " << image_path << std::endl;
             Frame *frame = load_frame(image_path);
             FexWrite::computeWriteEHD(frame, fout);
         }
@@ -140,7 +140,7 @@ int main(int argc, char **argv) {
 
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
-            std::cout << image_path << std::endl;
+            std::cout << "Processing: " << image_path << std::endl;
             Frame *frame = load_frame(image_path);
             FexWrite::computeWriteHTD(frame, fout);
         }
@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
 
         std::vector<char *> images = load_images(input_list);
         for (char *image_path: images) {
-            std::cout << image_path << std::endl;
+            std::cout << "Processing: " << image_path << std::endl;
             Frame *frame = load_frame(image_path);
             FexWrite::computeWriteSCD(frame, fout, deckSize);
         }
