@@ -22,3 +22,8 @@ See http://www.cs.bilkent.edu.tr/~bilmdg/bilvideo-7 for more details.
 Muhammet Bastan, Hayati Cam, Ugur Gudukbay and Ozgur Ulusoy, 
 "BilVideo-7: An MPEG-7 Compatible Video Indexing and Retrieval System", 
 IEEE MultiMedia, vol. 17, no. 3, pp. 62-73, 2010.
+
+### TroubleShoot:
+CODEC_FLAG_GLOBAL_HEADER is not declared?
+
+https://stackoverflow.com/a/47005401/6403336
